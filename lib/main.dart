@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import './screens/homeScreen.dart';
+import './models/gifAPI.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -8,15 +12,18 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "GIF SEARCH",
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-        accentColor: Colors.amber,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return ChangeNotifierProvider(
+      create: (contxt) => Gify(),
+      child: MaterialApp(
+        title: "GIF SEARCH",
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.purple,
+          accentColor: Colors.amber,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: GIF(),
       ),
-      home: GIF(),
     );
   }
 }
@@ -24,7 +31,9 @@ class _MyAppState extends State<MyApp> {
 class GIF extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: HomeScreen(),
+    );
   }
 }
 
