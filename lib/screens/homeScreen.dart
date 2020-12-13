@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -51,9 +53,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 15,
                   ),
                   RaisedButton(
-                    onPressed: () {
-                      setState(() {});
-                      gif.fetchGifs(_textController.text);
+                    onPressed: () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      print(_isLoading);
+                      await gif.fetchGifs(_textController.text);
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      print(_isLoading);
                     },
                     child: Text(
                       "Get It",
@@ -74,28 +83,69 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            if (_textController.text.isEmpty)
-              Text(
-                "Search to get GIFs",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                ),
+            Expanded(
+              child: Builder(
+                builder: (contxt) {
+                  if (_isLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (_textController.text.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "Search to get GIFs",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: context.isMobile ? 2 : 3,
+                      ),
+                      shrinkWrap: true,
+                      itemBuilder: (contxt, index) => Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 7,
+                        // margin: EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image.network(
+                                gif.gifs[index].url,
+                                fit: BoxFit.cover,
+                                color: Colors.white.withOpacity(0.8),
+                                colorBlendMode: BlendMode.darken,
+                              ),
+                              BackdropFilter(
+                                filter:
+                                    ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                                child: Container(
+                                  color: Colors.white.withOpacity(0.1),
+                                ),
+                              ),
+                              Image.network(
+                                gif.gifs[index].url,
+                                fit: BoxFit.contain,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      itemCount: gif.length,
+                    );
+                  }
+                },
               ),
-            if (_textController.text.isNotEmpty)
-              Container(
-                height: MediaQuery.of(context).size.height * 0.7,
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: context.isMobile ? 2 : 3,
-                  ),
-                  itemBuilder: (contxt, index) =>
-                      Image.network(gif.gifs[index].url),
-                  itemCount: gif.length,
-                ),
-              ),
+            ),
           ],
         ),
       ),

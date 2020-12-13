@@ -28,7 +28,7 @@ class Gify with ChangeNotifier {
 
   Future<void> fetchGifs(String searchTerm) async {
     final url =
-        "https://api.giphy.com/v1/gifs/search?api_key=$API_KEY&q=$searchTerm&limit=25&offset=0&rating=g&lang=en";
+        "https://api.giphy.com/v1/gifs/search?api_key=$API_KEY&q=$searchTerm&limit=50&offset=0&rating=g&lang=en";
     final response = await http.get(url);
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
 
